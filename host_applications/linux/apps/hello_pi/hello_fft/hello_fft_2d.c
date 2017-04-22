@@ -43,7 +43,9 @@ unsigned Microseconds(void) {
     clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
-
+void fft_2d() {
+	printf("hello from ultibo\n");
+}
 int main(int argc, char *argv[]) {
     int x, y, ret, mb = mbox_open();
     unsigned t[4];

@@ -31,7 +31,7 @@ uses
 
 {$linklib gpufft}
 {$linklib libm}
-procedure gpu_fft_2d; cdecl; external 'libgpufft' name 'gpu_fft_2d';
+procedure fft_2d; cdecl; external 'libgpufft' name 'fft_2d';
 
 var
 	A, B, C, IBPP: Integer;
@@ -132,7 +132,7 @@ begin
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
 
- gpu_fft_2d;
+ fft_2d;
  
  ConsoleWindowWriteLn (Handle, IntToStr(B));
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
