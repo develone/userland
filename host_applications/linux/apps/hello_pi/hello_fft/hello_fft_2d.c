@@ -40,14 +40,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unsigned Microseconds(void) {
     struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
+    //clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
 void fft_2d() {
 	printf("hello from ultibo\n");
-}
-int main(int argc, char *argv[]) {
-    int x, y, ret, mb = mbox_open();
+	    int x, y, ret, mb = mbox_open();
     unsigned t[4];
 
     struct GPU_FFT_COMPLEX *row;
@@ -59,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     // Create Windows bitmap file
     FILE *fp = fopen("hello_fft_2d.bmp", "wb");
-    if (!fp) return -666;
+    //if (!fp) return -666;
 
     // Write bitmap header
     memset(&bfh, 0, sizeof(bfh));
@@ -81,20 +79,20 @@ int main(int argc, char *argv[]) {
     // Prepare 1st FFT pass
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+0);
     if (ret) {
-        return ret;
+        //return ret;
     }
     // Prepare 2nd FFT pass
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+1);
     if (ret) {
         gpu_fft_release(fft_pass[0]);
-        return ret;
+        //return ret;
     }
     // Transpose from 1st pass output to 2nd pass input
     ret = gpu_fft_trans_prepare(mb, fft_pass[0], fft_pass[1], &trans);
     if (ret) {
         gpu_fft_release(fft_pass[0]);
         gpu_fft_release(fft_pass[1]);
-        return ret;
+        //return ret;
     }
 
     // Clear input array
@@ -108,7 +106,7 @@ int main(int argc, char *argv[]) {
     GPU_FFT_ROW(fft_pass[0], in, N-2)[N-2].re = 60;
 
     // ==> FFT() ==> T() ==> FFT() ==>
-    usleep(1); /* yield to OS */   t[0] = Microseconds();
+    //usleep(1); /* yield to OS */   t[0] = Microseconds();
     gpu_fft_execute(fft_pass[0]);  t[1] = Microseconds();
     gpu_fft_trans_execute(trans);  t[2] = Microseconds();
     gpu_fft_execute(fft_pass[1]);  t[3] = Microseconds();
@@ -133,5 +131,6 @@ int main(int argc, char *argv[]) {
     gpu_fft_release(fft_pass[1]);
     gpu_fft_trans_release(trans);
 
-    return 0;
+    //return 0;
+
 }
