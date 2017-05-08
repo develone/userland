@@ -44,3 +44,41 @@ This required increasing the GPU Memory from 64 to 128. This is quite impressive
   unsigned long int   	  	Longword
   float   	  				Single
   double   	  				Double 	  64-bit 
+05/08/17
+
+Location: Australia
+Contact: Contact Ultibo
+Re: Audio + VC4 assembly FFT
+Unread postby Ultibo » Mon May 08, 2017 3:28 am
+Hi develone,
+
+develone wrote:
+Any and all help is apprecaited.
+
+You seem to have the Pascal declarations of the functions pretty much correct, in order to allow them to be called by the C code they need to be made public and also need to be declared with the C calling convention.
+
+For example, if I take the mem_alloc function from your umailbox.pas unit the current declaration looks like this:
+Code: Select all
+function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword;
+
+To support calling from C it should look like this:
+Code: Select all
+function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
+
+The cdecl keyword gives the correct calling convention and the public name keyword makes it visible to external code.
+
+Most of these mailbox functions are already available in the Platform unit, so what you need to do (except for a couple that are missing) is simply to make those available with the correct name and C calling convention.
+
+Taking the mem_alloc example again, this is what the implementation part would look like in order to expose the existing function from Ultibo:
+
+Code: Select all
+function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl;
+begin
+   Result := GPUMemoryAllocate(size, align, flags);
+end;
+
+So in essence this is just creating a wrapper that allows C to call the Pascal functions.
+
+As per my earlier post, the qpu_enable and execute_qpu are not currently present in Ultibo but using the existing functions and the mailbox.c code from hello_fft it should be possible to create Pascal implementations of those as well. See the RPi3GPUMemoryAllocate, RPi3GPUMemoryRelease and RPi3GPUMemoryLock functions in the PlatformRPi3 unit for examples.
+
+PS. The one function you don't need to change the implementation of is mbox_open which is just a dummy as you have it already, but you do still need to fix the declaration to be cdecl and public.
