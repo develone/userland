@@ -1,8 +1,11 @@
 #!/bin/bash
 rm -f *.o
-arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_shaders.c -o gpu_shaders.o
-arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_twiddles.c -o gpu_twiddles.o
-arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c hello_fft_2d.c -o gpu_fft_2d.o
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_shaders.c 
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_twiddles.c
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c hello_fft_2d.c 
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft.c 
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_trans.c 
+arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_base.c 
 
 arm-none-eabi-ar rcs libgpufft.a *.o
 arm-none-eabi-ar t libgpufft.a > libgpufft_obj.txt
