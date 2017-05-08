@@ -44,6 +44,30 @@ This required increasing the GPU Memory from 64 to 128. This is quite impressive
   unsigned long int   	  	Longword
   float   	  				Single
   double   	  				Double 	  64-bit 
+
+chgs made to 
+git diff hello_fft_2d.c
+diff --git a/host_applications/linux/apps/hello_pi/hello_fft/hello_fft_2d.c b/host_applications/linux/apps/hello_pi/hello_fft/hello_fft_2d.c
+index a3868be..e2eca69 100644
+--- a/host_applications/linux/apps/hello_pi/hello_fft/hello_fft_2d.c
++++ b/host_applications/linux/apps/hello_pi/hello_fft/hello_fft_2d.c
+@@ -43,7 +43,7 @@ unsigned Microseconds(void) {
+     //clock_gettime(CLOCK_REALTIME, &ts);
+     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
+ }
+-void fft_2d() {
++int main(int argc, char *argv[]) {
+        printf("hello from ultibo\n");
+            int x, y, ret, mb = mbox_open();
+     unsigned t[4];
+@@ -131,6 +131,6 @@ void fft_2d() {
+     gpu_fft_release(fft_pass[1]);
+     gpu_fft_trans_release(trans);
+ 
+-    //return 0;
++    return 0;
+
+
 05/08/17
 
 Location: Australia
