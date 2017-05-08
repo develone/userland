@@ -27,6 +27,7 @@ uses
      RemoteShell,
   { needed for telnet }
  umailbox,
+  upointfunct,
  Syscalls;
 
 {$linklib gpufft}

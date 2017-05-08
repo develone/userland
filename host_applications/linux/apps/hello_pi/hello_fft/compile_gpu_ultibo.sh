@@ -5,7 +5,18 @@ arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=h
 arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c hello_fft_2d.c 
 arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft.c 
 arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_trans.c 
-arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_base.c 
+#arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_base.c
+#Need to provide gpu_fft_ptr_inc code that does this function
+#unsigned  (
+#    struct GPU_FFT_PTR *ptr,
+#    int bytes) {
+
+#    unsigned vc = ptr->vc;
+#    ptr->vc += bytes;
+#    ptr->arm.bptr += bytes;
+#    return vc;
+#}
+#This will require a new unit
 
 arm-none-eabi-ar rcs libgpufft.a *.o
 arm-none-eabi-ar t libgpufft.a > libgpufft_obj.txt
