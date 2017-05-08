@@ -1,0 +1,46 @@
+https://petewarden.com/2014/08/07/how-to-optimize-raspberry-pi-code-using-its-gpu/
+Pete Warden's blog
+
+https://ultibo.org/forum/viewtopic.php?f=9&t=290
+by Ultibo » Thu Sep 15, 2016 12:20 am
+
+If you look at the /hello_fft/mailbox.c file you will see use of mailbox functions for mem_alloc, mem_free, mem_lock, execute_code 
+and qpu_enable etc. These functions are mostly all available already in Ultibo through the mailbox interface. If you look in the 
+Platform unit you will find GPUMemoryAllocate(), GPUMemoryRelease(), GPUMemoryLock() and GPUExecuteCode() etc which are calling 
+the same mailbox functions used above.
+
+
+The .hex files in the /hello_fft/hex folder seem to be the prebuilt binary versions of each of the files in the /hello_fft/qasm folder and only need to be copied to a block of memory allocated by the GPU before calling the appropriate function to ask it to execute the code.
+Need to create the libs
+/opt/vc/src/hello_pi/libs/vgfont/libvgfont.a
+/opt/vc/src/hello_pi/libs/ilclient/libilclient.a
+
+~/userland/host_applications/linux/apps/hello_pi/libs/ilclient $ make
+~/userland/host_applications/linux/apps/hello_pi/libs/vgfont $ make
+
+Nedd to create the folders where the libs
+
+sudo mkdir -p /opt/vc/src/hello_pi/libs/vgfont
+sudo mkdir -p /opt/vc/src/hello_pi/libs/ilclient
+
+sudo cp  /home/pi/userland/host_applications/linux/apps/hello_pi/libs/ilclient/* /opt/vc/src/hello_pi/libs/ilclient/
+sudo cp  /home/pi/userland/host_applications/linux/apps/hello_pi/libs/vgfont/* /opt/vc/src/hello_pi/libs/vgfont/
+
+~/userland/host_applications/linux/apps/hello_pi/hello_teapot
+make
+sudo ./hello_teapot.bin
+
+This required increasing the GPU Memory from 64 to 128
+ 
+Re: programming gpu
+Postby develone » Tue Apr 18, 2017 5:55 am
+Hello All,
+I did the hello_teapot example just required a make
+pi@raspberrypi3:~/userland/host_applications/linux/apps/hello_pi/hello_teapot
+
+
+This required increasing the GPU Memory from 64 to 128. This is quite impressive what the RPi can do.
+
+  unsigned long int   	  	Longword
+  float   	  				Single
+  double   	  				Double 	  64-bit 
