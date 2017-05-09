@@ -26,7 +26,7 @@ uses
      ShellUpdate,
      RemoteShell,
   { needed for telnet }
- umailbox,
+ ucpugpumailbox,
   upointfunct,
  Syscalls;
 

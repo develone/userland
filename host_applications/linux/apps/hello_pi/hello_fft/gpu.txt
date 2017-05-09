@@ -67,6 +67,11 @@ index a3868be..e2eca69 100644
 -    //return 0;
 +    return 0;
 
+Also, you will run into some things in gpu_fft_base.c that cause some errors because the function 
+gpu_fft_get_host_info tries to call libbcm_host.so which isn't available in Ultibo, however all 
+it is asking for are very simple pieces of information like the peripheral address and size which 
+are readily available in the GlobalConfig unit of Ultibo. So quite likely this file can be left 
+out (you need to check what the other functions do) and the relevant functions simulated in Pascal.
 
 05/08/17
 
