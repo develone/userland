@@ -40,12 +40,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unsigned Microseconds(void) {
     struct timespec ts;
-    //clock_gettime(CLOCK_REALTIME, &ts);
+    clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
-void fft_2d() {
-	printf("hello from ultibo\n");
-	    int x, y, ret, mb = mbox_open();
+
+#ifdef ULTIBO
+	void fft_2d() {
+#else
+	int main(int argc, char *argv[]) {
+#endif	
+    int x, y, ret, mb = mbox_open();
     unsigned t[4];
 
     struct GPU_FFT_COMPLEX *row;
@@ -57,8 +61,10 @@ void fft_2d() {
 
     // Create Windows bitmap file
     FILE *fp = fopen("hello_fft_2d.bmp", "wb");
-    //if (!fp) return -666;
-
+#ifdef ULTIBO
+#else
+    if (!fp) return -666;
+#endif
     // Write bitmap header
     memset(&bfh, 0, sizeof(bfh));
     bfh.bfType = 0x4D42; //"BM"
@@ -78,23 +84,31 @@ void fft_2d() {
 
     // Prepare 1st FFT pass
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+0);
+#ifdef ULTIBO
+#else
     if (ret) {
-        //return ret;
+        return ret;
     }
+#endif
     // Prepare 2nd FFT pass
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+1);
+#ifdef ULTIBO
+#else    
     if (ret) {
         gpu_fft_release(fft_pass[0]);
-        //return ret;
+        return ret;
     }
+#endif    
     // Transpose from 1st pass output to 2nd pass input
     ret = gpu_fft_trans_prepare(mb, fft_pass[0], fft_pass[1], &trans);
+#ifdef ULTIBO
+#else     
     if (ret) {
         gpu_fft_release(fft_pass[0]);
         gpu_fft_release(fft_pass[1]);
-        //return ret;
+        return ret;
     }
-
+#endif
     // Clear input array
     for (y=0; y<N; y++) {
         row = GPU_FFT_ROW(fft_pass[0], in, y);
@@ -106,7 +120,7 @@ void fft_2d() {
     GPU_FFT_ROW(fft_pass[0], in, N-2)[N-2].re = 60;
 
     // ==> FFT() ==> T() ==> FFT() ==>
-    //usleep(1); /* yield to OS */   t[0] = Microseconds();
+    usleep(1); /* yield to OS */   t[0] = Microseconds();
     gpu_fft_execute(fft_pass[0]);  t[1] = Microseconds();
     gpu_fft_trans_execute(trans);  t[2] = Microseconds();
     gpu_fft_execute(fft_pass[1]);  t[3] = Microseconds();
@@ -130,7 +144,8 @@ void fft_2d() {
     gpu_fft_release(fft_pass[0]);
     gpu_fft_release(fft_pass[1]);
     gpu_fft_trans_release(trans);
-
-    //return 0;
-
+#ifdef ULTIBO
+#else
+    return 0;
+#endif
 }

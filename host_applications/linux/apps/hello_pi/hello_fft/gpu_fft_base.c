@@ -25,11 +25,16 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
+#ifdef ULTIBO
+#else
 #include <dlfcn.h>
+#endif	
 
 #include "gpu_fft.h"
+#ifdef ULTIBO
+#else
 #include "mailbox.h"
+#endif
 
 #define BUS_TO_PHYS(x) ((x)&~0xC0000000)
 
@@ -53,7 +58,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct GPU_FFT_HOST {
     unsigned mem_flg, mem_map, peri_addr, peri_size;
 };
-
+#ifdef ULTIBO
+#else
 int gpu_fft_get_host_info(struct GPU_FFT_HOST *info) {
     void *handle;
     unsigned (*bcm_host_get_sdram_address)     (void);
@@ -80,11 +86,16 @@ int gpu_fft_get_host_info(struct GPU_FFT_HOST *info) {
 
     if (bcm_host_get_peripheral_address) info->peri_addr = bcm_host_get_peripheral_address();
     if (bcm_host_get_peripheral_size)    info->peri_size = bcm_host_get_peripheral_size();
-
+ 
+	printf("bcm_host_get_sdram_address 0x%x \n",bcm_host_get_sdram_address);
+	printf("bcm_host_get_sdram_address() 0x%x \n",bcm_host_get_sdram_address());
+	printf("bcm_host_get_sdram_address&&bcm_host_get_sdram_address() 0x%x \n",bcm_host_get_sdram_address&&bcm_host_get_sdram_address());
+	printf("peri_addr 0x%x peri_size 0x%x \n",info->peri_addr, info->peri_size);
+	
     dlclose(handle);
     return 0;
 }
-
+#endif
 unsigned gpu_fft_base_exec_direct (
     struct GPU_FFT_BASE *base,
     int num_qpus) {
