@@ -24,3 +24,4 @@ echo "The objects in the libgpufft"
 cat libgpufft_obj.txt
 arm-none-eabi-objdump -d libgpufft.a > dis_libgpufft.txt
 fpc -vi -B -Tultibo -Parm -CpARMV7A -WpRPI2B @/home/pi/ultibo/core/fpc/bin/rpi2.cfg -O4 LibC_GPUFFT_RPi2.lpr
+ls -la libgpufft.a kernel7.img *.o
