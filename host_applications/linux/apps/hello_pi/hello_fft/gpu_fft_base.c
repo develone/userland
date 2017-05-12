@@ -86,7 +86,7 @@ int gpu_fft_get_host_info(struct GPU_FFT_HOST *info) {
 
     if (bcm_host_get_peripheral_address) info->peri_addr = bcm_host_get_peripheral_address();
     if (bcm_host_get_peripheral_size)    info->peri_size = bcm_host_get_peripheral_size();
- 
+	printf("mem_flg 0x%x mem_map 0x%x \n",info->mem_flg, info->mem_map);
 	printf("bcm_host_get_sdram_address 0x%x \n",bcm_host_get_sdram_address);
 	printf("bcm_host_get_sdram_address() 0x%x \n",bcm_host_get_sdram_address());
 	printf("bcm_host_get_sdram_address&&bcm_host_get_sdram_address() 0x%x \n",bcm_host_get_sdram_address&&bcm_host_get_sdram_address());

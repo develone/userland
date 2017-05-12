@@ -29,6 +29,8 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public nam
 implementation
 function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
 begin
+   info^.mem_flg := $c;
+   info^.mem_map := 0;
    info^.peri_addr := PeripheralGetBase;
    info^.peri_size := PeripheralGetsize + 1;
 
