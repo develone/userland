@@ -11,7 +11,8 @@ uses GlobalConfig,GlobalConst,GlobalTypes,Platform;
 
 function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
 function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public name 'mem_free';
-function mem_lock( handle:Longword):Longword; cdecl; public name 'mem_lock';
+function mem_lock( file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_lock';
+function mem_unlock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_unlock';
 function mbox_open():Integer; cdecl; public name 'mbox_open';
 function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longword; cdecl; public name 'execute_code';
 
@@ -40,7 +41,7 @@ function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public n
 	Result := GPUMemoryRelease(handle);
 	end;
 
-function mem_lock(handle:Longword):Longword; cdecl; public name 'mem_lock';
+function mem_lock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_lock';
 
 	{platform.pas lines 5005 - 5017
 	type 
@@ -50,6 +51,12 @@ function mem_lock(handle:Longword):Longword; cdecl; public name 'mem_lock';
 	Result := GPUMemoryLock(handle);
 	end;
 
+function mem_unlock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_unlock'; 
+
+	begin
+	Result := GPUMemoryUnlock(handle);
+	end;
+	
 function mbox_open():Integer; cdecl; public name 'mbox_open';
 
 	var
