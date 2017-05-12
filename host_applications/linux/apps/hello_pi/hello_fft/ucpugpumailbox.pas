@@ -18,7 +18,8 @@ function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longwo
 
 function qpu_enable(file_desc:Integer;ena : Longword):Longword; cdecl; public name 'qpu_enable';
 function execute_qpu(file_desc:Integer; num_qpus, control, noflush, timeout: Longword):Longword; cdecl; public name 'execute_qpu';
-
+function mapmem():Integer; cdecl; public name 'mapmem';
+function unmapmem():Integer; cdecl; public name 'unmapmem';
 implementation
  
 function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
@@ -65,7 +66,25 @@ function mbox_open():Integer; cdecl; public name 'mbox_open';
 	begin
 	Result := file_desc;
 	end;
+
+function mapmem():Integer; cdecl; public name 'mapmem';
+
+	var
+	file_desc:Integer;
 	
+	begin
+	Result := file_desc;
+	end;
+
+function unmapmem():Integer; cdecl; public name 'unmapmem';
+
+	var
+	file_desc:Integer;
+	
+	begin
+	Result := file_desc;
+	end;
+		
 function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longword; cdecl; public name 'execute_code';
  
 	{platform.pas lines 5038 - 5050
