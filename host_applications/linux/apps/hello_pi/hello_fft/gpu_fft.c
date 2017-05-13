@@ -40,7 +40,7 @@ int gpu_fft_prepare(
     int direction,  // GPU_FFT_FWD: fft(); GPU_FFT_REV: ifft()
     int jobs,       // number of transforms in batch
     struct GPU_FFT **fft) {
-
+	printf("at start of gpu_fft_prepare\n");
     unsigned info_bytes, twid_bytes, data_bytes, code_bytes, unif_bytes, mail_bytes;
     unsigned size, *uptr, vc_tw, vc_data;
     int i, q, shared, unique, passes, ret;
@@ -64,8 +64,9 @@ int gpu_fft_prepare(
             twid_bytes +        // twiddles
             unif_bytes +        // uniforms
             mail_bytes;         // mailbox message
-
+	printf("call gpu_fft_alloc\n");
     ret = gpu_fft_alloc(mb, size, &ptr);
+    printf("back in gpu_fft ret %d\n",ret);
     if (ret) return ret;
 
     // Header

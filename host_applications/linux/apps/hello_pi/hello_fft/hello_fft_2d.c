@@ -37,18 +37,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define N (1<<log2_N)
 
 #define GPU_FFT_ROW(fft, io, y) ((fft)->io+(fft)->step*(y))
-
+#ifdef ULTIBO
+#else
 unsigned Microseconds(void) {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
-
+#endif
 #ifdef ULTIBO
 	void fft_2d() {
 #else
 	int main(int argc, char *argv[]) {
 #endif	
+	printf("Enter of fft_2d\n");
     int x, y, ret, mb = mbox_open();
     unsigned t[4];
 
@@ -65,6 +67,7 @@ unsigned Microseconds(void) {
 #else
     if (!fp) return -666;
 #endif
+	
     // Write bitmap header
     memset(&bfh, 0, sizeof(bfh));
     bfh.bfType = 0x4D42; //"BM"
@@ -83,7 +86,9 @@ unsigned Microseconds(void) {
     fwrite(&bih, sizeof(bih), 1, fp);
 
     // Prepare 1st FFT pass
+    printf("call gpu_fft_prepare\n");
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+0);
+    printf("back in hello_fft_2d ret %d\n",ret);
 #ifdef ULTIBO
 #else
     if (ret) {
@@ -120,11 +125,13 @@ unsigned Microseconds(void) {
     GPU_FFT_ROW(fft_pass[0], in, N-2)[N-2].re = 60;
 
     // ==> FFT() ==> T() ==> FFT() ==>
+#ifdef ULTIBO
+#else     
     usleep(1); /* yield to OS */   t[0] = Microseconds();
     gpu_fft_execute(fft_pass[0]);  t[1] = Microseconds();
     gpu_fft_trans_execute(trans);  t[2] = Microseconds();
     gpu_fft_execute(fft_pass[1]);  t[3] = Microseconds();
-
+#endif
     // Write output to bmp file
     for (y=0; y<N; y++) {
         row = GPU_FFT_ROW(fft_pass[1], out, y);

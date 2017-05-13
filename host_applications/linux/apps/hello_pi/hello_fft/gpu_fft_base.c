@@ -148,9 +148,9 @@ int gpu_fft_alloc (
     struct GPU_FFT_BASE *base;
     volatile unsigned *peri;
     unsigned handle;
-
+	printf("at start of gpu_fft_alloc calling gpu_fft_get_host_info\n");
     if (gpu_fft_get_host_info(&host)) return -5;
-
+ 
     if (qpu_enable(mb, 1)) return -1;
 
     // Shared memory

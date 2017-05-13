@@ -132,8 +132,8 @@ begin
  {ConsoleWindowWriteLn(Handle2, 'writing bottom left handle2');}
  //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
-
- fft_2d;
+ ConsoleWindowWriteLn(Handle1, 'Calling C fft_2d');
+ fft_2d();
  
  ConsoleWindowWriteLn (Handle, IntToStr(B));
  ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
