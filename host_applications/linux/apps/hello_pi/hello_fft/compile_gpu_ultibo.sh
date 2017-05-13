@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -f *.o
+rm -f *.o kernel7.img libgpufft.a
 arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_shaders.c 
 arm-none-eabi-gcc -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c gpu_fft_twiddles.c
 arm-none-eabi-gcc -DULTIBO -mabi=aapcs -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c hello_fft_2d.c 
