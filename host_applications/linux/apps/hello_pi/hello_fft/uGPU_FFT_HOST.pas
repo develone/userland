@@ -18,6 +18,7 @@ end;
 
 var
 	GPU_FFT_HOST_list : GPU_FFT_HOST;
+	bcm_host_get_sdram_address: Longword;
 
 type 
 	GPU_FFT_HOST_listPointer = ^GPU_FFT_HOST;
@@ -29,6 +30,8 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public nam
 implementation
 function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
 begin
+   bcm_host_get_sdram_address := BUS_ALIAS;
+   
    info^.mem_flg := $c;
    info^.mem_map := 0;
    info^.peri_addr := PeripheralGetBase;
