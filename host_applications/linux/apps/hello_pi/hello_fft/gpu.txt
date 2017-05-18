@@ -1,3 +1,351 @@
+In the mbox.c file there are 5 methods mem_alloc, mem_free, mem_lock,
+mem_unlock, and execute_code. In Ultibo these are methods defined in platform.pas
+with different names GPUMemoryAllocate, GPUMemoryRelease, GPUMemorylock, GPUMemoryUnlock, 
+and GPUExecuteCode.  Wrappers are needed in Pascal such that C can call the existing
+Pascal methods defined in platform.pas.  
+mem_alloc		GPUMemoryAllocate
+mem_free		GPUMemoryRelease
+mem_lock		GPUMemorylock	
+mem_unlock		GPUMemoryUnlock
+GPUExecuteCode	GPUExecuteCode
+
+To make Pascal visible to C the following needs to be defined ucpugpumailbox.pas.
+
+{Prototypes for GPU Misc Handlers}
+function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
+function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public name 'mem_free';
+function mem_lock( file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_lock';
+function mem_unlock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_unlock';
+function mbox_open():Integer; cdecl; public name 'mbox_open';
+function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longword; cdecl; public name 'execute_code';
+
+The C Methods (mem_alloc, mem_free, mem_lock, mem_unlock, execute_code, qpu_enable, and
+execute_qpu) all use the same way in setting the values of an unsigned array.
+
+The 2 methods  qpu_enable & execute_qpu do not have Pascal defined methods.
+
+mbox.c 
+mem_alloc	Pascal	GPUMemoryAllocate
+
+####################################################
+
+unsigned mem_alloc(int file_desc, unsigned size, unsigned align, unsigned flags)
+{
+   int i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x3000c; // (the tag id)
+   p[i++] = 12; // (size of the buffer)
+   p[i++] = 12; // (size of the data)
+   p[i++] = size; // (num bytes? or pages?)
+   p[i++] = align; // (alignment)
+   p[i++] = flags; // (MEM_FLAG_L1_NONALLOCATING)
+
+   p[i++] = 0x00000000; // end tag
+   p[0] = i*sizeof *p; // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
+####################################################
+
+platform.pas
+
+*****************************************************
+{GPU Memory Functions}
+function GPUMemoryAllocate(Length,Alignment,Flags:LongWord):THandle; inline;
+{Allocate memory from the GPU}
+begin
+ {}
+ if Assigned(GPUMemoryAllocateHandler) then
+  begin
+   Result:=GPUMemoryAllocateHandler(Length,Alignment,Flags);
+  end
+ else
+  begin
+   Result:=INVALID_HANDLE_VALUE;
+  end;
+end;
+
+*****************************************************
+
+ucpugpumailbox.pas
+
+*****************************************************
+
+function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
+
+	{platform.pas lines 4973 - 4985
+	type
+    TGPUMemoryAllocate = function(Length,Alignment,Flags:LongWord):THandle; }
+
+	begin
+	Result := GPUMemoryAllocate(size, align, flags);
+	end;
+	
+*****************************************************
+
+mbox.c
+
+mem_free	Pascal	GPUMemoryRelease
+####################################################
+
+unsigned mem_free(int file_desc, unsigned handle)
+{
+   int i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x3000f; // (the tag id)
+   p[i++] = 4; // (size of the buffer)
+   p[i++] = 4; // (size of the data)
+   p[i++] = handle;
+
+   p[i++] = 0x00000000; // end tag
+   p[0] = i*sizeof *p; // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
+####################################################
+
+platform.pas
+
+*****************************************************
+
+function GPUMemoryRelease(Handle:THandle):LongWord; inline;
+{Release memory allocated from the GPU}
+begin
+ {}
+ if Assigned(GPUMemoryReleaseHandler) then
+  begin
+   Result:=GPUMemoryReleaseHandler(Handle);
+  end
+ else
+  begin
+   Result:=ERROR_CALL_NOT_IMPLEMENTED;
+  end;
+end;
+
+*****************************************************
+
+ucpugpumailbox.pas
+
+*****************************************************
+
+function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public name 'mem_free';
+
+	{platform.pas lines 4989 - 5001
+	type 
+    TGPUMemoryRelease = function(Handle:THandle):LongWord; }
+    
+	begin
+	Result := GPUMemoryRelease(handle);
+	end;
+	
+*****************************************************
+
+
+mem_lock	Pascal	 GPUMemoryLock
+
+####################################################
+
+unsigned mem_lock(int file_desc, unsigned handle)
+{
+   int i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x3000d; // (the tag id)
+   p[i++] = 4; // (size of the buffer)
+   p[i++] = 4; // (size of the data)
+   p[i++] = handle;
+
+   p[i++] = 0x00000000; // end tag
+   p[0] = i*sizeof *p; // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
+####################################################
+
+platform.pas
+
+*****************************************************
+
+function GPUMemoryLock(Handle:THandle):LongWord; inline;
+{Lock memory allocated from the GPU and return an address}
+begin
+ {}
+ if Assigned(GPUMemoryLockHandler) then
+  begin
+   Result:=GPUMemoryLockHandler(Handle);
+  end
+ else
+  begin
+   Result:=0;
+  end;
+end;
+
+*****************************************************
+
+ucpugpumailbox.pas
+
+*****************************************************
+
+function mem_lock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_lock';
+
+	{platform.pas lines 5005 - 5017
+	type 
+    TGPUMemoryLock = function(Handle:THandle):LongWord; }
+    
+	begin
+	Result := GPUMemoryLock(handle);
+	end;
+	
+*****************************************************
+
+mem_unlock	Pascal	 GPUMemoryUnLock
+
+####################################################
+
+unsigned mem_unlock(int file_desc, unsigned handle)
+{
+   int i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x3000e; // (the tag id)
+   p[i++] = 4; // (size of the buffer)
+   p[i++] = 4; // (size of the data)
+   p[i++] = handle;
+
+   p[i++] = 0x00000000; // end tag
+   p[0] = i*sizeof *p; // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
+####################################################
+
+platform.pas
+
+*****************************************************
+function GPUMemoryUnlock(Handle:THandle):LongWord; inline;
+{Unlock memory allocated from the GPU}
+begin
+ {}
+ if Assigned(GPUMemoryUnlockHandler) then
+  begin
+   Result:=GPUMemoryUnlockHandler(Handle);
+  end
+ else
+  begin
+   Result:=ERROR_CALL_NOT_IMPLEMENTED;
+  end;
+end;	
+ 		
+*****************************************************
+
+ucpugpumailbox.pas
+
+*****************************************************
+
+function mem_unlock(file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_unlock'; 
+
+	begin
+	Result := GPUMemoryUnlock(handle);
+	end;
+
+*****************************************************
+
+execute_code	Pascal	GPUExecuteCode
+
+####################################################
+
+unsigned execute_code(int file_desc, unsigned code, unsigned r0, unsigned r1, unsigned r2, unsigned r3, unsigned r4, unsigned r5)
+{
+   int i=0;
+   unsigned p[32];
+   p[i++] = 0; // size
+   p[i++] = 0x00000000; // process request
+
+   p[i++] = 0x30010; // (the tag id)
+   p[i++] = 28; // (size of the buffer)
+   p[i++] = 28; // (size of the data)
+   p[i++] = code;
+   p[i++] = r0;
+   p[i++] = r1;
+   p[i++] = r2;
+   p[i++] = r3;
+   p[i++] = r4;
+   p[i++] = r5;
+
+   p[i++] = 0x00000000; // end tag
+   p[0] = i*sizeof *p; // actual size
+
+   mbox_property(file_desc, p);
+   return p[5];
+}
+
+####################################################
+
+platform.pas
+
+*****************************************************
+
+function GPUExecuteCode(Address:Pointer;R0,R1,R2,R3,R4,R5:LongWord):LongWord; inline;
+{Execute a block of code on the GPU}
+begin
+ {}
+ if Assigned(GPUExecuteCodeHandler) then
+  begin
+   Result:=GPUExecuteCodeHandler(Address,R0,R1,R2,R3,R4,R5);
+  end
+ else
+  begin
+   Result:=0;
+  end;
+end;
+
+*****************************************************
+
+
+ucpugpumailbox.pas
+
+***************************************************** 
+
+function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longword; cdecl; public name 'execute_code';
+ 
+	{platform.pas lines 5038 - 5050
+	type 
+    TGPUExecuteCode = function(Address:Pointer;R0,R1,R2,R3,R4,R5:LongWord):LongWord; }  
+    
+	begin
+	Result := GPUExecuteCode(file_desc,R0,R1,R2,R3,R4,R5);
+	end;
+
+*****************************************************
+
+var
+ {QPU Handlers} 
+ QPUExecuteCodeHandler:TQPUExecuteCode;
+ QPUEnableHandler:TQPUEnable;	
+ 
+ type
+ {Prototypes for QPU Handlers}
+  TQPUMemoryAllocate = function(file_desc:Integer; num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
+  TQPUEnable = function(file_desc:Integer; enable:LongWord):THandle;cdecl; public name 'qpu_enable';
+
 https://petewarden.com/2014/08/07/how-to-optimize-raspberry-pi-code-using-its-gpu/
 Pete Warden's blog
 
