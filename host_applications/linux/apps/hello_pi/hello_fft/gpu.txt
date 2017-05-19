@@ -8,6 +8,13 @@ PS. The one function you don't need to change the implementation of is mbox_open
 is just a dummy as you have it already, but you do still need to fix the declaration to 
 be cdecl and public.
 
+-------------------------mbox.c-------------------------
+
+unsigned qpu_enable(int file_desc, unsigned enable)
+unsigned execute_qpu(int file_desc, unsigned num_qpus, unsigned control, unsigned noflush, unsigned timeout)
+
+-------------------------mbox.c-------------------------
+
 &&&&&&&&&&&&&&&&&&&&&&&&platformrpi3.pas&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 function RPi3GPUMemoryAllocate(Length,Alignment,Flags:LongWord):THandle;
