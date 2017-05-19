@@ -1,3 +1,142 @@
+e^ix = cosx + isinx
+
+using the existing functions and the mailbox.c code from hello_fft it should be possible 
+to create Pascal implementations of those as well. See the RPi3GPUMemoryAllocate, 
+RPi3GPUMemoryRelease and RPi3GPUMemoryLock functions in the PlatformRPi3 unit for examples.
+
+PS. The one function you don't need to change the implementation of is mbox_open which 
+is just a dummy as you have it already, but you do still need to fix the declaration to 
+be cdecl and public.
+
+&&&&&&&&&&&&&&&&&&&&&&&&platformrpi3.pas&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+function RPi3GPUMemoryAllocate(Length,Alignment,Flags:LongWord):THandle;
+function RPi3GPUMemoryRelease(Handle:THandle):LongWord;
+function RPi3GPUMemoryLock(Handle:THandle):LongWord;
+
+GPUMemoryAllocateHandler:=RPi3GPUMemoryAllocate;
+GPUMemoryReleaseHandler:=RPi3GPUMemoryRelease;
+GPUMemoryLockHandler:=RPi3GPUMemoryLock;
+
+function RPi3GPUMemoryAllocate(Length,Alignment,Flags:LongWord):THandle;
+{Allocate GPU Memory from the Mailbox property tags channel}
+var
+ Size:LongWord;
+ Response:LongWord;
+ Header:PBCM2837MailboxHeader;
+ Footer:PBCM2837MailboxFooter;
+ Tag:PBCM2837MailboxTagAllocateMemory;
+begin
+ {}
+ Result:=INVALID_HANDLE_VALUE;
+ 
+ function RPi3GPUMemoryRelease(Handle:THandle):LongWord;
+{Release GPU Memory from the Mailbox property tags channel}
+var
+ Size:LongWord;
+ Response:LongWord;
+ Header:PBCM2837MailboxHeader;
+ Footer:PBCM2837MailboxFooter;
+ Tag:PBCM2837MailboxTagReleaseMemory;
+begin
+ {}
+ Result:=ERROR_INVALID_PARAMETER;
+ 
+ {Calculate Size}
+ Size:=SizeOf(TBCM2837MailboxHeader) + SizeOf(TBCM2837MailboxTagReleaseMemory) + SizeOf(TBCM2837MailboxFooter);
+ 
+ {Allocate Mailbox Buffer}
+ Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+ if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+ if Header = nil then Exit;
+ try
+  {Clear Buffer}
+  FillChar(Header^,Size,0);
+ 
+  {Setup Header}
+  Header.Size:=Size;
+  Header.Code:=BCM2837_MBOX_REQUEST_CODE;
+ 
+  {Setup Tag}
+  Tag:=PBCM2837MailboxTagReleaseMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2837MailboxHeader)));
+  Tag.Header.Tag:=BCM2837_MBOX_TAG_RELEASE_MEMORY;
+  Tag.Header.Size:=SizeOf(TBCM2837MailboxTagReleaseMemory) - SizeOf(TBCM2837MailboxTagHeader);
+  Tag.Header.Length:=SizeOf(Tag.Request);
+  Tag.Request.Handle:=Handle;
+ 
+  {Setup Footer}
+  Footer:=PBCM2837MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2837MailboxTagReleaseMemory)));
+  Footer.Tag:=BCM2837_MBOX_TAG_END;
+  
+  {Call Mailbox}
+  Result:=MailboxPropertyCall(BCM2837_MAILBOX_0,BCM2837_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response);
+  if Result <> ERROR_SUCCESS then
+   begin
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryRelease - MailboxPropertyCall Failed');
+    Exit;
+   end; 
+  
+  {Get Result}
+  Result:=Tag.Response.Status;
+ finally
+  FreeMem(Header);
+ end;
+end;
+
+function RPi3GPUMemoryLock(Handle:THandle):LongWord;
+{Lock GPU Memory from the Mailbox property tags channel}
+var
+ Size:LongWord;
+ Response:LongWord;
+ Header:PBCM2837MailboxHeader;
+ Footer:PBCM2837MailboxFooter;
+ Tag:PBCM2837MailboxTagLockMemory;
+begin
+ {}
+ Result:=0;
+ 
+ {Calculate Size}
+ Size:=SizeOf(TBCM2837MailboxHeader) + SizeOf(TBCM2837MailboxTagLockMemory) + SizeOf(TBCM2837MailboxFooter);
+ 
+ {Allocate Mailbox Buffer}
+ Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+ if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+ if Header = nil then Exit;
+ try
+  {Clear Buffer}
+  FillChar(Header^,Size,0);
+ 
+  {Setup Header}
+  Header.Size:=Size;
+  Header.Code:=BCM2837_MBOX_REQUEST_CODE;
+ 
+  {Setup Tag}
+  Tag:=PBCM2837MailboxTagLockMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2837MailboxHeader)));
+  Tag.Header.Tag:=BCM2837_MBOX_TAG_LOCK_MEMORY;
+  Tag.Header.Size:=SizeOf(TBCM2837MailboxTagLockMemory) - SizeOf(TBCM2837MailboxTagHeader);
+  Tag.Header.Length:=SizeOf(Tag.Request);
+  Tag.Request.Handle:=Handle;
+ 
+  {Setup Footer}
+  Footer:=PBCM2837MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2837MailboxTagLockMemory)));
+  Footer.Tag:=BCM2837_MBOX_TAG_END;
+  
+  {Call Mailbox}
+  if MailboxPropertyCall(BCM2837_MAILBOX_0,BCM2837_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
+   begin
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryLock - MailboxPropertyCall Failed');
+    Exit;
+   end; 
+  
+  {Get Result}
+  Result:=Tag.Response.Address;
+ finally
+  FreeMem(Header);
+ end;
+end;
+ 
+&&&&&&&&&&&&&&&&&&&&&&&&platformrpi3.pas&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 In the mbox.c file there are 5 methods mem_alloc, mem_free, mem_lock,
 mem_unlock, and execute_code. In Ultibo these are methods defined in platform.pas
 with different names GPUMemoryAllocate, GPUMemoryRelease, GPUMemorylock, GPUMemoryUnlock, 
