@@ -28,6 +28,7 @@ uses
   { needed for telnet }
  ucpugpumailbox,
  uGPU_FFT_HOST,
+ uxxxx,
  Syscalls;
 
 {$linklib gpufft}
