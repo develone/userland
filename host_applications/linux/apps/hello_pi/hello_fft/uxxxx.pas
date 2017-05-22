@@ -5,7 +5,7 @@
 unit uxxxx;
 
 interface
-uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836;
+uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads;
  {Adding structures for ExecuteQPURequest, ExecuteQPUReaponse, and TBCM2836MailboxTagExecuteQPU}
 type
  {Execute QPU}
@@ -47,7 +47,137 @@ type
   0:(Request:TBCM2836MailboxTagEnableQPURequest);
   1:(Response:TBCM2836MailboxTagEnableQPUResponse);
  end; 
+TGPUExecuteQPU = function(Handle:THandle):LongWord;
+TGPUEnableQPU = function(Handle:THandle):LongWord;
+
+var
+GPUExecuteQPUHandler:TGPUExecuteQPU;
+GPUEnableQPUHandler:TGPUEnableQPU;
 
 implementation
+
+function GPUExecuteQPU(Handle:THandle):LongWord; inline;
+{Release memory allocated from the GPU}
+begin
+ {}
+ if Assigned(GPUExecuteQPUHandler) then
+  begin
+   Result:=GPUExecuteQPUHandler(Handle);
+  end
+ else
+  begin
+   Result:=ERROR_CALL_NOT_IMPLEMENTED;
+  end;
+end; 
+
+function GPUEnableQPU(Handle:THandle):LongWord; inline;
+{Release memory allocated from the GPU}
+begin
+ {}
+ if Assigned(GPUEnableQPUHandler) then
+  begin
+   Result:=GPUEnableQPUHandler(Handle);
+  end
+ else
+  begin
+   Result:=ERROR_CALL_NOT_IMPLEMENTED;
+  end;
+end; 
+
+function XXXXGPUExecuteQPU(Length,Alignment,Flags:LongWord):THandle;
+var
+ Size:LongWord;
+ Response:LongWord;
+ Header:PBCM2836MailboxHeader;
+ Footer:PBCM2836MailboxFooter;
+ Tag: PBCM2836MailboxTagExecuteQPU;
+ begin
+ Result:=INVALID_HANDLE_VALUE;
  
+  {Calculate Size}
+ Size:=SizeOf(TBCM2836MailboxHeader) + SizeOf(TBCM2836MailboxTagExecuteQPU) + SizeOf(TBCM2836MailboxFooter);
+ 
+  {Allocate Mailbox Buffer}
+  Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+  if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+  if Header = nil then Exit;
+  {try}
+  {Clear Buffer}
+  FillChar(Header^,Size,0);
+ 
+  {Setup Header}
+  Header.Size:=Size;
+  Header.Code:=BCM2836_MBOX_REQUEST_CODE;
+ 
+  {Setup Tag
+  Tag:=PBCM2836MailboxTagAllocateMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
+  Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
+  Tag.Header.Size:=SizeOf(TBCM2836MailboxTagAllocateMemory) - SizeOf(TBCM2836MailboxTagHeader);
+  Tag.Header.Length:=SizeOf(Tag.Request);
+  Tag.Request.Size:=Length;
+  Tag.Request.Alignment:=Alignment;
+  Tag.Request.Flags:=Flags; }
+  {Setup Footer}
+  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagAllocateMemory)));
+  Footer.Tag:=BCM2836_MBOX_TAG_END;   
+  {Call Mailbox}
+  if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
+   begin
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryAllocate - MailboxPropertyCall Failed');
+    Exit;
+   end;  
+
+  {Get Result}
+ {Result:=Tag.Response.Handle;}
+ {finally}
+  
+ end;
+ 
+ function XXXXGPUEnableQPU(Enable:LongWord):THandle;
+var
+ Size:LongWord;
+ Response:LongWord;
+ Header:PBCM2836MailboxHeader;
+ Footer:PBCM2836MailboxFooter;
+ Tag: PBCM2836MailboxTagExecuteQPU;
+ begin
+ Result:=INVALID_HANDLE_VALUE;
+ 
+   {Calculate Size}
+ Size:=SizeOf(TBCM2836MailboxHeader) + SizeOf(TBCM2836MailboxTagEnableQPU) + SizeOf(TBCM2836MailboxFooter);
+ 
+  {Allocate Mailbox Buffer}
+  Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+  if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
+  if Header = nil then Exit; 
+  {try}
+  {Clear Buffer}
+  FillChar(Header^,Size,0);
+ 
+  {Setup Header}
+  Header.Size:=Size;
+  Header.Code:=BCM2836_MBOX_REQUEST_CODE;
+ 
+  {Setup Tag
+  Tag:=PBCM2836MailboxTagAllocateMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
+  Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
+  Tag.Header.Size:=SizeOf(TBCM2836MailboxTagAllocateMemory) - SizeOf(TBCM2836MailboxTagHeader);
+  Tag.Header.Length:=SizeOf(Tag.Request);
+  Tag.Request.Size:=Length;
+  Tag.Request.Alignment:=Alignment;
+  Tag.Request.Flags:=Flags; }
+  {Setup Footer}
+  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagAllocateMemory)));
+  Footer.Tag:=BCM2836_MBOX_TAG_END; 
+ 
+  {Call Mailbox}
+  if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
+   begin
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryAllocate - MailboxPropertyCall Failed');
+    Exit;
+   end; 
+  {Get Result}
+ {Result:=Tag.Response.Handle;}
+ {finally} 
+ end;
 end.
