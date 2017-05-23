@@ -87,7 +87,7 @@ var
  
   {Setup Tag}
   Tag:=PBCM2836MailboxTagExecuteQPU(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
-  Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
+  Tag.Header.Tag:=BCM2836_MBOX_TAG_EXECUTE_QPU;
   Tag.Header.Size:=SizeOf(TBCM2836MailboxTagExecuteQPU) - SizeOf(TBCM2836MailboxTagHeader);
   Tag.Header.Length:=SizeOf(Tag.Request);
   Tag.Request.NumQPUs:=num_qpus;
@@ -138,7 +138,7 @@ var
  
   {Setup Tag}
   Tag:=PBCM2836MailboxTagEnableQPU(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
-  Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
+  Tag.Header.Tag:=BCM2836_MBOX_TAG_ENABLE_QPU;
   Tag.Header.Size:=SizeOf(TBCM2836MailboxTagAllocateMemory) - SizeOf(TBCM2836MailboxTagHeader);
   Tag.Header.Length:=SizeOf(Tag.Request);
   Tag.Request.Enable:=Enable;
