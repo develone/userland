@@ -16,8 +16,6 @@ function mem_unlock(file_desc:Integer; handle:Longword):Longword; cdecl; public 
 function mbox_open():Integer; cdecl; public name 'mbox_open';
 function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longword; cdecl; public name 'execute_code';
 
-function qpu_enable(file_desc:Integer;ena : Longword):Longword; cdecl; public name 'qpu_enable';
-function execute_qpu(file_desc:Integer; num_qpus, control, noflush, timeout: Longword):Longword; cdecl; public name 'execute_qpu';
 function mapmem():Integer; cdecl; public name 'mapmem';
 function unmapmem():Integer; cdecl; public name 'unmapmem';
 implementation
@@ -95,36 +93,5 @@ function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longwo
 	Result := GPUExecuteCode(file_desc,R0,R1,R2,R3,R4,R5);
 	end;
 
-function qpu_enable(file_desc:Integer;ena : Longword):Longword; cdecl; public name 'qpu_enable';	
-	var 
-	p : array[0..31] of Longword;
-	
-	begin
-	p[0] := 0;
-	p[1] := $00000000;
-	p[2] := $30012;
-	p[3] := 4;
-	p[4] := 4;
-	p[5] := ena;
-	p[6] := $00000000;
-	
-	Result := p[5];
-	end;
-	
-function execute_qpu(file_desc:Integer; num_qpus, control, noflush, timeout: Longword):Longword; cdecl; public name 'execute_qpu';
-	var 
-	p : array[0..31] of Longword;
-	
-	begin
-	p[0] := 0;
-	p[1] := $00000000;
-	p[2] := $30011;
-	p[3] := 16;
-	p[4] := 16;
-	p[5] := num_qpus;
-	p[6] := control;
-	p[7] := noflush;
-	p[8] := timeout;
-	Result := p[5];
-	end;
+ 
 end.

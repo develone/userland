@@ -4,8 +4,12 @@
 
 unit uxxxx;
 
+
 interface
 uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads;
+function GPUExecuteQPU(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
+function GPUEnableQPU(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
+
  {Adding structures for ExecuteQPURequest, ExecuteQPUReaponse, and TBCM2836MailboxTagExecuteQPU}
 type
  {Execute QPU}
@@ -50,41 +54,13 @@ type
 TGPUExecuteQPU = function(Handle:THandle):LongWord;
 TGPUEnableQPU = function(Handle:THandle):LongWord;
 
-var
-GPUExecuteQPUHandler:TGPUExecuteQPU;
-GPUEnableQPUHandler:TGPUEnableQPU;
+ 
 
 implementation
 
-function GPUExecuteQPU(Handle:THandle):LongWord; inline;
-{Release memory allocated from the GPU}
-begin
- {}
- if Assigned(GPUExecuteQPUHandler) then
-  begin
-   Result:=GPUExecuteQPUHandler(Handle);
-  end
- else
-  begin
-   Result:=ERROR_CALL_NOT_IMPLEMENTED;
-  end;
-end; 
 
-function GPUEnableQPU(Handle:THandle):LongWord; inline;
-{Release memory allocated from the GPU}
-begin
- {}
- if Assigned(GPUEnableQPUHandler) then
-  begin
-   Result:=GPUEnableQPUHandler(Handle);
-  end
- else
-  begin
-   Result:=ERROR_CALL_NOT_IMPLEMENTED;
-  end;
-end; 
 
-function XXXXGPUExecuteQPU(Length,Alignment,Flags:LongWord):THandle;
+function GPUExecuteQPU(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
 var
  Size:LongWord;
  Response:LongWord;
@@ -133,7 +109,7 @@ var
   
  end;
  
- function XXXXGPUEnableQPU(Enable:LongWord):THandle;
+ function GPUEnableQPU(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
 var
  Size:LongWord;
  Response:LongWord;
