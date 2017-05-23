@@ -77,7 +77,7 @@ var
   Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
   if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
   if Header = nil then Exit;
-  {try}
+  try
   {Clear Buffer}
   FillChar(Header^,Size,0);
  
@@ -85,16 +85,17 @@ var
   Header.Size:=Size;
   Header.Code:=BCM2836_MBOX_REQUEST_CODE;
  
-  {Setup Tag
-  Tag:=PBCM2836MailboxTagAllocateMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
+  {Setup Tag}
+  Tag:=PBCM2836MailboxTagExecuteQPU(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
   Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
-  Tag.Header.Size:=SizeOf(TBCM2836MailboxTagAllocateMemory) - SizeOf(TBCM2836MailboxTagHeader);
+  Tag.Header.Size:=SizeOf(TBCM2836MailboxTagExecuteQPU) - SizeOf(TBCM2836MailboxTagHeader);
   Tag.Header.Length:=SizeOf(Tag.Request);
-  Tag.Request.Size:=Length;
-  Tag.Request.Alignment:=Alignment;
-  Tag.Request.Flags:=Flags; }
+  Tag.Request.NumQPUs:=num_qpus;
+  Tag.Request.control:=control;
+  Tag.Request.noflush:=noflush;
+  Tag.Request.timeout:=timeout;  
   {Setup Footer}
-  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagAllocateMemory)));
+  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagExecuteQPU)));
   Footer.Tag:=BCM2836_MBOX_TAG_END;   
   {Call Mailbox}
   if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
@@ -104,9 +105,10 @@ var
    end;  
 
   {Get Result}
- {Result:=Tag.Response.Handle;}
- {finally}
-  
+ Result:=Tag.Response.Status;
+ finally
+  FreeMem(Header);
+ end; 
  end;
  
  function GPUEnableQPU(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
@@ -115,7 +117,7 @@ var
  Response:LongWord;
  Header:PBCM2836MailboxHeader;
  Footer:PBCM2836MailboxFooter;
- Tag: PBCM2836MailboxTagExecuteQPU;
+ Tag: PBCM2836MailboxTagEnableQPU;
  begin
  Result:=INVALID_HANDLE_VALUE;
  
@@ -126,7 +128,7 @@ var
   Header:=GetNoCacheAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
   if Header = nil then Header:=GetAlignedMem(Size,SIZE_16); {Must be 16 byte aligned}
   if Header = nil then Exit; 
-  {try}
+  try
   {Clear Buffer}
   FillChar(Header^,Size,0);
  
@@ -134,16 +136,15 @@ var
   Header.Size:=Size;
   Header.Code:=BCM2836_MBOX_REQUEST_CODE;
  
-  {Setup Tag
-  Tag:=PBCM2836MailboxTagAllocateMemory(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
+  {Setup Tag}
+  Tag:=PBCM2836MailboxTagEnableQPU(PtrUInt(Header) + PtrUInt(SizeOf(TBCM2836MailboxHeader)));
   Tag.Header.Tag:=BCM2836_MBOX_TAG_ALLOCATE_MEMORY;
   Tag.Header.Size:=SizeOf(TBCM2836MailboxTagAllocateMemory) - SizeOf(TBCM2836MailboxTagHeader);
   Tag.Header.Length:=SizeOf(Tag.Request);
-  Tag.Request.Size:=Length;
-  Tag.Request.Alignment:=Alignment;
-  Tag.Request.Flags:=Flags; }
+  Tag.Request.Enable:=Enable;
+ 
   {Setup Footer}
-  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagAllocateMemory)));
+  Footer:=PBCM2836MailboxFooter(PtrUInt(Tag) + PtrUInt(SizeOf(TBCM2836MailboxTagEnableQPU)));
   Footer.Tag:=BCM2836_MBOX_TAG_END; 
  
   {Call Mailbox}
@@ -153,7 +154,9 @@ var
     Exit;
    end; 
   {Get Result}
- {Result:=Tag.Response.Handle;}
- {finally} 
+ Result:=Tag.Response.Status;
+ finally 
+ FreeMem(Header);
+ end;
  end;
 end.
