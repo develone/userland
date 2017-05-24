@@ -100,7 +100,7 @@ var
   {Call Mailbox}
   if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
    begin
-    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryAllocate - MailboxPropertyCall Failed');
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUExecuteQPU - MailboxPropertyCall Failed');
     Exit;
    end;  
 
@@ -150,7 +150,7 @@ var
   {Call Mailbox}
   if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
    begin
-    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUMemoryAllocate - MailboxPropertyCall Failed');
+    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUEnableQPU - MailboxPropertyCall Failed');
     Exit;
    end; 
   {Get Result}
