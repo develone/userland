@@ -144,6 +144,7 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  ConsoleWindowWriteLn (Handle, 'TFTP Demo. & GPU fft');
  ConsoleWindowWriteLn(Handle, 'Calling C GPU fft_2d');
+  ConsoleWindowWriteLn(Handle,IntToStr(GPU_MEMORY_SIZE));
  fft_2d();
  
   
