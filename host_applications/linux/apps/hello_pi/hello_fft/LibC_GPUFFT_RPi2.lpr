@@ -29,23 +29,23 @@ uses
  ucpugpumailbox,
  uGPU_FFT_HOST,
  uxxxx,
+ Logging,
+ BCM2709,
  Syscalls;
 
 {$linklib gpufft}
 {$linklib libm}
 procedure fft_2d; cdecl; external 'libgpufft' name 'fft_2d';
 
-var
-	A, B, C, IBPP: Integer;
+ 
 
 var
  Handle:THandle;
- Handle1:THandle;
- {Handle2:THandle;}
- Window:TWindowHandle;
- Window1:TWindowHandle;
- //Handle3:THandle;
-
+ 
+ 
+ Count:Integer;
+ 
+ 
  IPAddress : string;
  X:LongWord;
  Y:LongWord;
@@ -90,7 +90,7 @@ procedure Msg (Sender : TObject; s : string);
 
 begin
 
-  ConsoleWindowWriteLn (Handle1, s);
+  ConsoleWindowWriteLn (Handle, s);
 
 end;
 
@@ -108,36 +108,46 @@ end;
 
 begin
 
- ConsoleWindowWriteLn (Handle1, 'TFTP Demo.');
+
  // wait for IP address and SD Card to be initialised.
  WaitForSDDrive;
  IPAddress := WaitForIPComplete;
  {Wait a few seconds for all initialization (like filesystem and network) to be done}
  Sleep(3000);
 
- {Create a graphics window to display our bitmap, let's use the new CONSOLE_POSITION_FULLSCREEN option}
- Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT);
- Window1:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT);
- {Call our bitmap drawing function and pass the name of our bitmap file on the SD card,
-  we also pass the handle for our graphics console window and the X and Y locations to
-  draw the bitmap.
+ 
 
-  What happens if the bitmap is bigger than the window? It will be trimmed to fit, try it
-  yourself and see}
+ Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_LEFT,True);
+ 
+ 
+  {Because console logging is disabled by default we need to enable it first.
 
- Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
- Handle1:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPRIGHT,True);
- {Handle2:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT,True);}
- //Handle3:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMRIGHT,True);
- ConsoleWindowWriteLn(Handle1, 'writing top right handle1');
- {ConsoleWindowWriteLn(Handle2, 'writing bottom left handle2');}
- //ConsoleWindowWriteLn(Handle3, 'writing bottom right handle3');
+  This can also be done using the command line parameter CONSOLE_REGISTER_LOGGING=1
+  in the cmdline.txt file on the SD card.
+
+  }
+ CONSOLE_REGISTER_LOGGING:=True;
+
+ LoggingConsoleDeviceAdd(ConsoleDeviceGetDefault);
+ LoggingDeviceSetDefault(LoggingDeviceFindByType(LOGGING_TYPE_CONSOLE));
+  Sleep(3000);
+  ConsoleWindowWriteLn(Handle,'Sending lots of messages to the log');
+  for Count:=1 to 20 do
+  begin
+   LoggingOutput('Message no ' + IntToStr(Count) + ' sent at ' + DateTimeToStr(Now));
+
+   {Sleep for a random amount of time to mix up the output}
+   Sleep(Random(350));
+  end;
+  
+ 
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
- ConsoleWindowWriteLn(Handle1, 'Calling C fft_2d');
+ ConsoleWindowWriteLn (Handle, 'TFTP Demo. & GPU fft');
+ ConsoleWindowWriteLn(Handle, 'Calling C GPU fft_2d');
  fft_2d();
  
- ConsoleWindowWriteLn (Handle, IntToStr(B));
- ConsoleWindowWriteLn (Handle1, 'Local Address ' + IPAddress);
+  
+ ConsoleWindowWriteLn (Handle, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  

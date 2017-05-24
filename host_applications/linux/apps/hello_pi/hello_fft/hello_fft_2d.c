@@ -50,8 +50,9 @@ unsigned Microseconds(void) {
 #else
 	int main(int argc, char *argv[]) {
 #endif	
-	printf("Enter of fft_2d\n");
+	//printf("Enter of fft_2d\n");
     int x, y, ret, mb = mbox_open();
+    //printf("Enter of fft_2d mb 0x%x\n",mb);
     unsigned t[4];
 
     struct GPU_FFT_COMPLEX *row;
@@ -86,7 +87,7 @@ unsigned Microseconds(void) {
     fwrite(&bih, sizeof(bih), 1, fp);
 
     // Prepare 1st FFT pass
-    printf("call gpu_fft_prepare\n");
+    printf("Enter of fft_2d mb 0x%x call gpu_fft_prepare N %d \n",mb,N);
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+0);
     printf("back in hello_fft_2d ret %d\n",ret);
 #ifdef ULTIBO

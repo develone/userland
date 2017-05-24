@@ -94,9 +94,11 @@ shaders[] = {
 };
 
 unsigned int  gpu_fft_shader_size(int log2_N) {
+	printf("gpu_fft_shader_size 0x%x \n",log2_N);
     return shaders[log2_N-8].size;
 }
 
 unsigned int *gpu_fft_shader_code(int log2_N) {
+	printf("gpu_fft_shader_code 0x%x \n",log2_N-8);
     return shaders[log2_N-8].code;
 }
