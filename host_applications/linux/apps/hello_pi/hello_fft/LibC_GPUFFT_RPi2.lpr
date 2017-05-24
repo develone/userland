@@ -29,6 +29,8 @@ uses
  ucpugpumailbox,
  uGPU_FFT_HOST,
  uxxxx,
+
+ uLiftBitmap,
  Logging,
  BCM2709,
  Syscalls;
@@ -41,7 +43,7 @@ procedure fft_2d; cdecl; external 'libgpufft' name 'fft_2d';
 
 var
  Handle:THandle;
- 
+ Window:TWindowHandle;
  
  Count:Integer;
  
@@ -51,7 +53,12 @@ var
  Y:LongWord;
  Width:LongWord;
  Height:LongWord;
-
+ DECOMP: Integer;
+ ENCODE: Integer;
+ TCP_DISTORATIO: Integer;
+ FILTER: Integer; 
+ COMPRESSION_RATIO : Integer;
+ DIS_CR_FLG : Integer;
 function WaitForIPComplete : string;
 
 var
@@ -117,8 +124,8 @@ begin
 
  
 
- Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_LEFT,True);
- 
+ Handle:=ConsoleWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_TOPLEFT,True);
+ Window:=GraphicsWindowCreate(ConsoleDeviceGetDefault,CONSOLE_POSITION_BOTTOMLEFT);
  
   {Because console logging is disabled by default we need to enable it first.
 
@@ -146,7 +153,7 @@ begin
  ConsoleWindowWriteLn(Handle, 'Calling C GPU fft_2d');
   ConsoleWindowWriteLn(Handle,IntToStr(GPU_MEMORY_SIZE));
  fft_2d();
- 
+ DrawBitmap(Window,'C:\hello_fft_2d.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
   
  ConsoleWindowWriteLn (Handle, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
