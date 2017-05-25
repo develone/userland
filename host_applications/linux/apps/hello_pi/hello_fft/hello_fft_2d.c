@@ -127,12 +127,16 @@ unsigned Microseconds(void) {
 
     // ==> FFT() ==> T() ==> FFT() ==>
 #ifdef ULTIBO
+gpu_fft_execute(fft_pass[0]);
+gpu_fft_trans_execute(trans);
+gpu_fft_execute(fft_pass[1]);
 #else     
     usleep(1); /* yield to OS */   t[0] = Microseconds();
     gpu_fft_execute(fft_pass[0]);  t[1] = Microseconds();
     gpu_fft_trans_execute(trans);  t[2] = Microseconds();
     gpu_fft_execute(fft_pass[1]);  t[3] = Microseconds();
 #endif
+
     // Write output to bmp file
     for (y=0; y<N; y++) {
         row = GPU_FFT_ROW(fft_pass[1], out, y);
