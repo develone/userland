@@ -7,7 +7,7 @@ unit uGPU_FFT_HOST;
  
 interface
 
-uses GlobalConfig,GlobalConst,GlobalTypes,Platform;
+uses GlobalConfig,GlobalConst,GlobalTypes,Platform,SysUtils;
 
  
 type
@@ -50,6 +50,8 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
      info^.mem_map  := $0;   
  
   end;
+  LoggingOutput('GPU_FFT_HOST ' + IntToStr(info^.mem_flg) + ' ' + IntToStr(info^.mem_map) + ' ' + IntToStr(BUS_ALIAS));
+  LoggingOutput('GPU_FFT_HOST ' + IntToStr(info^.peri_addr) + ' ' + IntToStr(info^.peri_size));
   Result := 0;
 end;
  
