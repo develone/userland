@@ -6,7 +6,7 @@ unit uxxxx;
 
 
 interface
-uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads;
+uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads,SysUtils;
 function GPUExecuteQPU(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
 function GPUEnableQPU(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
 
@@ -31,6 +31,7 @@ type
   0:(Request:TBCM2836MailboxTagExecuteQPURequest);
   1:(Response:TBCM2836MailboxTagExecuteQPUResponse);
  end; 
+TGPUExecuteQPU = function(Handle:THandle):LongWord;
 
 {Adding structures for EnableQPURequest, EnableQPUReaponse, and  TBCM2836MailboxTagEnableQPU} 
  type
@@ -51,7 +52,7 @@ type
   0:(Request:TBCM2836MailboxTagEnableQPURequest);
   1:(Response:TBCM2836MailboxTagEnableQPUResponse);
  end; 
-TGPUExecuteQPU = function(Handle:THandle):LongWord;
+
 TGPUEnableQPU = function(Handle:THandle):LongWord;
 
  
@@ -100,7 +101,12 @@ var
   {Call Mailbox}
   if MailboxPropertyCall(BCM2836_MAILBOX_0,BCM2836_MAILBOX0_CHANNEL_PROPERTYTAGS_ARMVC,Header,Response) <> ERROR_SUCCESS then
    begin
-    if PLATFORM_LOG_ENABLED then PlatformLogError('GPUExecuteQPU - MailboxPropertyCall Failed');
+    if PLATFORM_LOG_ENABLED then 
+    PlatformLogError('GPUExecuteQPU - MailboxPropertyCall Failed');
+	PlatformLogError('NumQPUs ' + IntToStr(Tag.Request.NumQPUs) + ' control ' + IntToStr(Tag.Request.control));
+	PlatformLogError('noflush ' + IntToStr(Tag.Request.noflush) + ' timeout ' + IntToStr(Tag.Request.timeout));
+
+
     Exit;
    end;  
 

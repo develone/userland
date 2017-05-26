@@ -131,6 +131,7 @@ unsigned gpu_fft_base_exec(
     if (base->vc_msg) {
         // Use mailbox
         // Returns: 0x0 for success; 0x80000000 for timeout
+        printf("calling execute_qpu 0x%x 0x%x 0x%x 0x%x\n",num_qpus,base->vc_msg,GPU_FFT_NO_FLUSH,GPU_FFT_TIMEOUT);
         return execute_qpu(base->mb, num_qpus, base->vc_msg, GPU_FFT_NO_FLUSH, GPU_FFT_TIMEOUT);
     }
     else {
