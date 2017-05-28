@@ -6,7 +6,7 @@ unit uxxxx;
 
 
 interface
-uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads,SysUtils;
+uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads{$IFDEF CONSOLE_EARLY_INIT},Devices,Framebuffer{$ENDIF}{$IFDEF LOGGING_EARLY_INIT},Logging{$ENDIF},SysUtils;
 function GPUExecuteQPU(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
 function GPUEnableQPU(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
 

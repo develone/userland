@@ -46,7 +46,7 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
   begin
 //And 0x4 is the same as BCM2835_MBOX_MEM_FLAG_DIRECT from BCM2835 unit
 // ARM cannot see VC4 L2 on Pi 2 
-     info^.mem_flg := $4;  
+     info^.mem_flg := $C;  
      info^.mem_map  := $0;   
  
   end;

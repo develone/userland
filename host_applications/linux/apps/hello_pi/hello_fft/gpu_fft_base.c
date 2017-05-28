@@ -71,7 +71,7 @@ int gpu_fft_get_host_info(struct GPU_FFT_HOST *info) {
     info->peri_size = 0x01000000;
     info->mem_flg = GPU_FFT_USE_VC4_L2_CACHE? 0xC : 0x4;
     info->mem_map = GPU_FFT_USE_VC4_L2_CACHE? 0x0 : 0x20000000; // Pi 1 only
-
+	printf("mem_flg 0x%x mem_map 0x%x \n",info->mem_flg,info->mem_map);
     handle = dlopen("libbcm_host.so", RTLD_LAZY);
     if (!handle) return -1;
 

@@ -138,23 +138,19 @@ begin
  LoggingConsoleDeviceAdd(ConsoleDeviceGetDefault);
  LoggingDeviceSetDefault(LoggingDeviceFindByType(LOGGING_TYPE_CONSOLE));
   Sleep(3000);
-  ConsoleWindowWriteLn(Handle,'Sending lots of messages to the log');
-  for Count:=1 to 20 do
-  begin
-   LoggingOutput('Message no ' + IntToStr(Count) + ' sent at ' + DateTimeToStr(Now));
+  
 
-   {Sleep for a random amount of time to mix up the output}
-   Sleep(Random(350));
-  end;
   
  
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  ConsoleWindowWriteLn (Handle, 'TFTP Demo. & GPU fft');
  ConsoleWindowWriteLn(Handle, 'Calling C GPU fft_2d');
-  ConsoleWindowWriteLn(Handle,IntToStr(GPU_MEMORY_SIZE));
+ ConsoleWindowWriteLn(Handle,'GPU_MEMORY_BASE ' + IntToStr(GPU_MEMORY_BASE));
+ ConsoleWindowWriteLn(Handle,'GPU_MEMORY_SIZE ' + IntToStr(GPU_MEMORY_SIZE));
  fft_2d();
- DrawBitmap(Window,'C:\hello_fft_2d.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
-  
+ 
+ //DrawBitmap(Window,'C:\hello_fft_2d.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
+ 
  ConsoleWindowWriteLn (Handle, 'Local Address ' + IPAddress);
  SetOnMsg (@Msg);
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
