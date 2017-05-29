@@ -103,8 +103,8 @@ var
    begin
     if PLATFORM_LOG_ENABLED then 
     PlatformLogError('GPUExecuteQPU - MailboxPropertyCall Failed');
-	PlatformLogError('NumQPUs ' + IntToStr(Tag.Request.NumQPUs) + ' control ' + IntToStr(Tag.Request.control));
-	PlatformLogError('noflush ' + IntToStr(Tag.Request.noflush) + ' timeout ' + IntToStr(Tag.Request.timeout));
+	PlatformLogError('NumQPUs ' + IntToStr(Tag.Request.NumQPUs) + ' control ' + '0x' +IntToHex(Tag.Request.control,8));
+	PlatformLogError('noflush ' + IntToStr(Tag.Request.noflush) + ' timeout ' + '0x' +IntToHex(Tag.Request.timeout,8));
 
 
     Exit;

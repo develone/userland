@@ -50,8 +50,8 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
      info^.mem_map  := $0;   
  
   end;
-  LoggingOutput('GPU_FFT_HOST ' + IntToStr(info^.mem_flg) + ' ' + IntToStr(info^.mem_map) + ' ' + IntToStr(BUS_ALIAS));
-  LoggingOutput('GPU_FFT_HOST ' + IntToStr(info^.peri_addr) + ' ' + IntToStr(info^.peri_size));
+  LoggingOutput('GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
+  LoggingOutput('GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));
   Result := 0;
 end;
  

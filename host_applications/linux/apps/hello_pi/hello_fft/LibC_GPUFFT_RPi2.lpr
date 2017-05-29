@@ -145,8 +145,8 @@ begin
  ConsoleWindowWriteLn(Handle, TimeToStr(Time));
  ConsoleWindowWriteLn (Handle, 'TFTP Demo. & GPU fft');
  ConsoleWindowWriteLn(Handle, 'Calling C GPU fft_2d');
- ConsoleWindowWriteLn(Handle,'GPU_MEMORY_BASE ' + IntToStr(GPU_MEMORY_BASE));
- ConsoleWindowWriteLn(Handle,'GPU_MEMORY_SIZE ' + IntToStr(GPU_MEMORY_SIZE));
+ ConsoleWindowWriteLn(Handle,'GPU_MEMORY_BASE ' + '0x' +IntToHex(GPU_MEMORY_BASE,8));
+ ConsoleWindowWriteLn(Handle,'GPU_MEMORY_SIZE ' + '0x' +IntToHex(GPU_MEMORY_SIZE,8));
  fft_2d();
  
  //DrawBitmap(Window,'C:\hello_fft_2d.bmp',0,0,DECOMP,ENCODE,TCP_DISTORATIO,FILTER, COMPRESSION_RATIO,DIS_CR_FLG);
