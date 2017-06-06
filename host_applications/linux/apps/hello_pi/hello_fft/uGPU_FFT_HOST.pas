@@ -28,14 +28,14 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public nam
 
 
 implementation
-function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public name 'gpu_fft_get_host_info';
+function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
  
  
   begin
  
    info^.peri_addr := PeripheralGetBase;
-   //info^.peri_size := PeripheralGetsize + 1;
-   info^.peri_size := PeripheralGetsize;
+   info^.peri_size := PeripheralGetsize ;
+
    
   
   //Defaults for Pi1
@@ -51,8 +51,8 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public nam
      info^.mem_map  := $0;   
  
   end;
-  LoggingOutput('Returning GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
-  LoggingOutput('Returning GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));
+  LoggingOutput('GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
+  LoggingOutput('GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));
   Result := 0;
 end;
  

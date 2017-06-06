@@ -1,0 +1,118 @@
+ sudo ./hello_fft_2d.bin 
+Enter of fft_2d mb 0x3 call gpu_fft_prepare N 512 
+at start of gpu_fft_prepare
+gpu_fft_shader_size 0x9 
+call gpu_fft_alloc
+at start of gpu_fft_alloc calling gpu_fft_get_host_info
+Start mem_flg 0xc mem_map 0x0 bcm_host_get_sdram_address 0x0 
+Start peri_addr 0x20000000 peri_size 0x1000000 
+bcm_host_get_sdram_address 0x76c8fcf8 bcm_host_get_sdram_address() 0x40000000 
+bcm_host_get_sdram_address&&bcm_host_get_sdram_address() != 0x40000000 false 
+Returning mem_flg 0xc mem_map 0x0 
+Returning peri_addr 0x3f000000 peri_size 0x1000000 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x1 p6 0x0  p7 0x1 p8 0x76c8fcf8 
+p9 0x76e2e000  
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+back in gpu_fft ret 0
+gpu_fft_shader_code 0x1 
+back in hello_fft_2d ret 0
+at start of gpu_fft_prepare
+gpu_fft_shader_size 0x9 
+call gpu_fft_alloc
+at start of gpu_fft_alloc calling gpu_fft_get_host_info
+Start mem_flg 0xc mem_map 0x0 bcm_host_get_sdram_address 0x0 
+Start peri_addr 0x20000000 peri_size 0x1000000 
+bcm_host_get_sdram_address 0x75484cf8 bcm_host_get_sdram_address() 0x40000000 
+bcm_host_get_sdram_address&&bcm_host_get_sdram_address() != 0x40000000 false 
+Returning mem_flg 0xc mem_map 0x0 
+Returning peri_addr 0x3f000000 peri_size 0x1000000 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x1 p6 0x0  p7 0x0 p8 0x75484cf8 
+p9 0x76e2e000  
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+mbox_property
+file_desc 0x3 buf 0x7ef37504 
+back in gpu_fft ret 0
+gpu_fft_shader_code 0x1 
+at start of gpu_fft_alloc calling gpu_fft_get_host_info
+Start mem_flg 0xc mem_map 0x0 bcm_host_get_sdram_address 0x7ef375c4 
+Start peri_addr 0x20000000 peri_size 0x1000000 
+bcm_host_get_sdram_address 0x73c79cf8 bcm_host_get_sdram_address() 0x40000000 
+bcm_host_get_sdram_address&&bcm_host_get_sdram_address() != 0x40000000 false 
+Returning mem_flg 0xc mem_map 0x0 
+Returning peri_addr 0x3f000000 peri_size 0x1000000 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x1 p6 0x0  p7 0x0 p8 0x73c79cf8 
+p9 0x76e2e000  
+mbox_property
+file_desc 0x3 buf 0x7ef37534 
+mbox_property
+file_desc 0x3 buf 0x7ef37534 
+mbox_property
+file_desc 0x3 buf 0x7ef37534 
+calling execute_qpu 0x8 0xbd401590 0x1 0x7d0
+execute_qpu
+p0 0x28 p2 0x30011  p3 0x10 p4 0x10 
+p5 0x8 p6 0xbd401590  p7 0x1 p8 0x7d0 
+p9 0x0  
+mbox_property
+file_desc 0x3 buf 0x7ef37584 
+calling execute_qpu 0x1 0xbc3ea000 0x1 0x7d0
+execute_qpu
+p0 0x28 p2 0x30011  p3 0x10 p4 0x10 
+p5 0x1 p6 0xbc3ea000  p7 0x1 p8 0x7d0 
+p9 0x0  
+mbox_property
+file_desc 0x3 buf 0x7ef37584 
+calling execute_qpu 0x8 0xbcbf6590 0x1 0x7d0
+execute_qpu
+p0 0x28 p2 0x30011  p3 0x10 p4 0x10 
+p5 0x8 p6 0xbcbf6590  p7 0x1 p8 0x7d0 
+p9 0x0  
+mbox_property
+file_desc 0x3 buf 0x7ef37584 
+1st FFT    12486 usecs
+Transpose   7936 usecs
+2nd FFT    11960 usecs
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x0 p6 0x0  p7 0x7ef37604 p8 0x76f013b8 
+p9 0x76f1eee0  
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x0 p6 0x0  p7 0x7ef37604 p8 0x76f013b8 
+p9 0x76f1eee0  
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+mbox_property
+file_desc 0x3 buf 0x7ef3757c 
+qpu_enable
+p0 0x1c p2 0x30012  p3 0x4 p4 0x4 
+p5 0x0 p6 0x0  p7 0x7ef37604 p8 0x76f013b8 
+p9 0x76f1eee0  
+mbox_property
+file_desc 0x3 buf 0x7ef3757c
