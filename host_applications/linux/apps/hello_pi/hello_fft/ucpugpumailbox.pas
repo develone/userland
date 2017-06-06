@@ -7,7 +7,8 @@ unit ucpugpumailbox;
 
 interface
 
-uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads{$IFDEF CONSOLE_EARLY_INIT},Devices,Framebuffer{$ENDIF}{$IFDEF LOGGING_EARLY_INIT},Logging{$ENDIF},SysUtils;
+//uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads{$IFDEF CONSOLE_EARLY_INIT},Devices,Framebuffer{$ENDIF}{$IFDEF LOGGING_EARLY_INIT},Logging{$ENDIF},SysUtils;
+uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils;
 
 
 function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
@@ -145,7 +146,8 @@ var
 
     Exit;
    end;  
-
+   LoggingOutput('NumQPUs ' + IntToStr(Tag.Request.NumQPUs) + ' control ' + '0x' +IntToHex(Tag.Request.control,8));
+   LoggingOutput('noflush ' + IntToStr(Tag.Request.noflush) + ' timeout ' + '0x' +IntToHex(Tag.Request.timeout,8));
   {Get Result}
  Result:=Tag.Response.Status;
  finally
@@ -194,6 +196,7 @@ var
     if PLATFORM_LOG_ENABLED then PlatformLogError('GPUEnableQPU - MailboxPropertyCall Failed');
     Exit;
    end; 
+  LoggingOutput('qpu_enable');
   {Get Result}
  Result:=Tag.Response.Status;
  finally 

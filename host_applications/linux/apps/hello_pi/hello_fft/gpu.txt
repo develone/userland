@@ -8,6 +8,33 @@ PS. The one function you don't need to change the implementation of is mbox_open
 is just a dummy as you have it already, but you do still need to fix the declaration to 
 be cdecl and public.
 
+struct GPU_FFT_COMPLEX {
+    float re, im;
+};
+
+re	xx	GPU_FFT_COMPLEX		 *cptr 
+	xx
+	xx
+	xx
+im	yy
+	yy
+	yy
+	yy
+
+vc	zz
+	zz
+	zz
+	zz
+
+struct GPU_FFT_PTR {
+    unsigned vc;
+    union { struct GPU_FFT_COMPLEX *cptr;
+            void                   *vptr;
+            char                   *bptr;
+            float                  *fptr;
+            unsigned               *uptr; } arm;
+};
+	
 -------------------------mbox.c-------------------------
 
 unsigned qpu_enable(int file_desc, unsigned enable)

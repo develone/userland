@@ -98,6 +98,7 @@ unsigned Microseconds(void) {
 #endif
     // Prepare 2nd FFT pass
     ret = gpu_fft_prepare(mb, log2_N, GPU_FFT_REV, N, fft_pass+1);
+    printf("back in hello_fft_2d ret %d\n",ret);
 #ifdef ULTIBO
 #else    
     if (ret) {
@@ -108,6 +109,7 @@ unsigned Microseconds(void) {
 printf("GPU_FFT_COMPLEX 0x%x \n",*row);
     // Transpose from 1st pass output to 2nd pass input
     ret = gpu_fft_trans_prepare(mb, fft_pass[0], fft_pass[1], &trans);
+    printf("back in hello_fft_2d ret %d\n",ret);
 #ifdef ULTIBO
 #else     
     if (ret) {

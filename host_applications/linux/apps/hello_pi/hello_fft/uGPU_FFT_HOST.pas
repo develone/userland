@@ -28,30 +28,31 @@ function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public nam
 
 
 implementation
-function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl;
+function gpu_fft_get_host_info(info : PGPU_FFT_HOST):Longword; cdecl; public name 'gpu_fft_get_host_info';
  
  
   begin
  
    info^.peri_addr := PeripheralGetBase;
-   info^.peri_size := PeripheralGetsize + 1;
-
+   //info^.peri_size := PeripheralGetsize + 1;
+   info^.peri_size := PeripheralGetsize;
    
   
   //Defaults for Pi1
   info^.mem_flg := $c;   //Note that 0xC is the same as BCM2835_MBOX_MEM_FLAG_L1_NONALLOCATING from BCM2835 unit
   info^.mem_map := 0;
-   
-  if BUS_ALIAS <> $40000000 then // Pi 2?
+  LoggingOutput('Start GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
+  LoggingOutput('Start GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));   
+  if BUS_ALIAS and $40000000 <> $40000000 then // Pi 2?
   begin
 //And 0x4 is the same as BCM2835_MBOX_MEM_FLAG_DIRECT from BCM2835 unit
 // ARM cannot see VC4 L2 on Pi 2 
-     info^.mem_flg := $C;  
+     info^.mem_flg := $4;  
      info^.mem_map  := $0;   
  
   end;
-  LoggingOutput('GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
-  LoggingOutput('GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));
+  LoggingOutput('Returning GPU_FFT_HOST ' + '0x' +IntToHex(info^.mem_flg,8) + ' ' + '0x' +IntToHex(info^.mem_map,8) + ' ' + '0x' +IntToHex(BUS_ALIAS,8));
+  LoggingOutput('Returning GPU_FFT_HOST ' + '0x' +'0x' +IntToHex(info^.peri_addr,8) + ' ' + '0x' +'0x' +IntToHex(info^.peri_size,8));
   Result := 0;
 end;
  
