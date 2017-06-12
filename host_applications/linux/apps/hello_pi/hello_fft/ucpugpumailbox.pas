@@ -7,8 +7,8 @@ unit ucpugpumailbox;
 
 interface
 
-//uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads{$IFDEF CONSOLE_EARLY_INIT},Devices,Framebuffer{$ENDIF}{$IFDEF LOGGING_EARLY_INIT},Logging{$ENDIF},SysUtils;
-uses GlobalConfig,GlobalConst,GlobalTypes,BCM2836,Platform,PlatformARM,PlatformARMv7,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils;
+ 
+uses GlobalConfig,GlobalConst,GlobalTypes,Platform,PlatformARMv7,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils;
 
 function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
 function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public name 'mem_free';
