@@ -113,7 +113,10 @@ unsigned mem_alloc(int file_desc, unsigned size, unsigned align, unsigned flags)
 
    p[i++] = 0x00000000; // end tag
    p[0] = i*sizeof *p; // actual size
-
+	printf("mem_alloc\n");
+	printf("p0 0x%x p2 0x%x  p3 0x%x p4 0x%x \n",p[0],p[2],p[3],p[4]);  
+	printf("p5 0x%x p6 0x%x  p7 0x%x p8 0x%x \n",p[5],p[6],p[7],p[8]);
+	printf("p9 0x%x  \n",p[9]);
    mbox_property(file_desc, p);
    return p[5];
 }
@@ -151,7 +154,10 @@ unsigned mem_lock(int file_desc, unsigned handle)
 
    p[i++] = 0x00000000; // end tag
    p[0] = i*sizeof *p; // actual size
-
+	printf("mem_lock\n");
+	printf("p0 0x%x p2 0x%x  p3 0x%x p4 0x%x \n",p[0],p[2],p[3],p[4]);  
+	printf("p5 0x%x p6 0x%x  p7 0x%x p8 0x%x \n",p[5],p[6],p[7],p[8]);
+	printf("p9 0x%x  \n",p[9]);
    mbox_property(file_desc, p);
    return p[5];
 }
