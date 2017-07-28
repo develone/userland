@@ -37,14 +37,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define N (1<<log2_N)
 
 #define GPU_FFT_ROW(fft, io, y) ((fft)->io+(fft)->step*(y))
-#ifdef ULTIBO
-#else
 unsigned Microseconds(void) {
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec*1000000 + ts.tv_nsec/1000;
 }
-#endif
 #ifdef ULTIBO
 	void fft_2d() {
 #else
@@ -126,16 +123,11 @@ unsigned Microseconds(void) {
     GPU_FFT_ROW(fft_pass[0], in, N-2)[N-2].re = 60;
 
     // ==> FFT() ==> T() ==> FFT() ==>
-#ifdef ULTIBO
-gpu_fft_execute(fft_pass[0]);
-gpu_fft_trans_execute(trans);
-gpu_fft_execute(fft_pass[1]);
-#else     
     usleep(1); /* yield to OS */   t[0] = Microseconds();
     gpu_fft_execute(fft_pass[0]);  t[1] = Microseconds();
     gpu_fft_trans_execute(trans);  t[2] = Microseconds();
     gpu_fft_execute(fft_pass[1]);  t[3] = Microseconds();
-#endif
+
 
     // Write output to bmp file
     for (y=0; y<N; y++) {
