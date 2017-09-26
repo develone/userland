@@ -33,6 +33,7 @@ uses
  uLiftBitmap,
  Logging,
  BCM2709,
+ VC4,
  Syscalls;
 
 {$linklib gpufft}

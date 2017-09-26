@@ -8,8 +8,8 @@ unit ucpugpumailbox;
 interface
 
  
-uses GlobalConfig,GlobalConst,GlobalTypes,Platform,PlatformARMv7,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils;
-
+//uses GlobalConfig,GlobalConst,GlobalTypes,Platform,PlatformARMv7,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils,VC4;
+uses GlobalConfig,Platform,HeapManager,Threads,Devices,Framebuffer,Logging,SysUtils,VC4;
 function mem_alloc(file_desc:Integer; size, align, flags:Longword):Longword; cdecl; public name 'mem_alloc';
 function mem_free(file_desc:Integer;  handle:Longword):Longword; cdecl; public name 'mem_free';
 function mem_lock( file_desc:Integer; handle:Longword):Longword; cdecl; public name 'mem_lock';
@@ -20,8 +20,8 @@ function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longwo
 function mapmem():Integer; cdecl; public name 'mapmem';
 function unmapmem():Integer; cdecl; public name 'unmapmem';
 
-function execute_qpu(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
-function qpu_enable(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';	
+//function VC4QPUExecute(NumQPUs,Control,NoFlush,Timeout:LongWord):LongWord;cdecl; public name 'execute_qpu';
+//function VC4VCHIQEnable(Address:LongWord):LongWord;cdecl; public name 'qpu_enable';
 
 implementation
  
@@ -99,14 +99,14 @@ function execute_code(file_desc:Pointer; r0, r1, r2, r3, r4, r5:Longword):Longwo
 	end;
 
 
-function execute_qpu(file_desc:Integer;num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
+function execute_qpu(num_qpus,control,noflush,timeout:LongWord):THandle;cdecl; public name 'execute_qpu';
  	begin
-	Result := GPUExecuteQPU(num_qpus,control,noflush,timeout);
+	Result := VC4QPUExecute(num_qpus,control,noflush,timeout);
 	end;
 
-function qpu_enable(file_desc:Integer;Enable:LongWord):THandle;cdecl; public name 'qpu_enable';	
+function qpu_enable(Enable:LongWord):THandle;cdecl; public name 'qpu_enable';
  	begin
-	Result := GPUEnableQPU(Enable);
+	Result := VC4QPUEnable(Enable);
 	end;
 end.
 
